@@ -1,7 +1,12 @@
 import React from "react";
+import { AppRoutes as Routes } from "./routes";
 
 function App() {
-  return <div className="pt-3 bg-gray-400 text-white">Sebas</div>;
+  return (
+    <>
+      <Routes />
+    </>
+  );
 }
 
 export default App;
