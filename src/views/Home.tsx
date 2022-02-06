@@ -3,16 +3,10 @@ import { Layout, SearchBar, Text, Card, Pagination } from "../components";
 import { BlogProps, useBlogListContext } from "../context";
 
 function Home() {
-  const { searchString, blogList } = useBlogListContext();
+  const { searchString, blogList, totalItems } = useBlogListContext();
   const [currentPage, setCurrentPage] = useState();
   const [currentBlogs, setCurrentBlogs] = useState<BlogProps[]>();
   const [totalPages, setTotalPages] = useState();
-  const [totalItems, setTotalItems] = useState<number>(0);
-
-  useEffect(() => {
-    console.log(blogList.length);
-    if (totalItems !== blogList.length) setTotalItems(blogList.length);
-  }, [blogList]);
 
   function onPageChanged(data: any) {
     const { currentPage, totalPages, pageLimit } = data;
@@ -39,7 +33,7 @@ function Home() {
           currentBlogs.length > 0 &&
           currentBlogs.map((blog, idx) => <Card key={blog.id} blog={blog} />)}
       </div>
-      {totalItems > 0 && (
+      {(totalItems > 0 || (searchString && totalItems > 0)) && (
         <div className="my-16">
           <Pagination
             totalItems={totalItems}

@@ -97,7 +97,7 @@ class Pagination extends Component<PaginationProps, State> {
   };
 
   componentDidMount() {
-    console.log(this.totalItems);
+    console.log("this ", this.totalItems);
     this.gotoPage(1);
   }
 
