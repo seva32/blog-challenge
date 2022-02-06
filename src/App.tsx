@@ -1,10 +1,13 @@
 import React from "react";
 import { AppRoutes as Routes } from "./routes";
+import { BlogListProvider } from "./context";
 
 function App() {
   return (
     <>
-      <Routes />
+      <BlogListProvider>
+        <Routes />
+      </BlogListProvider>
     </>
   );
 }
