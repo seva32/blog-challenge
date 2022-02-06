@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Header } from "../";
+import { Header, Footer } from "../";
 
 type Props = {
   children: ReactNode;
@@ -16,6 +16,7 @@ export function Layout({ children }: Props) {
       <div className="flex justify-center bg-lightgray flex-grow">
         <div className="w-80%">{children}</div>
       </div>
+      <Footer />
     </div>
   );
 }
