@@ -1,10 +1,14 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 
 type PaginationProps = {
-  totalRecords: number;
+  totalItems: number;
   pageLimit?: number;
   pageNeighbours?: number;
-  onPageChanged?: () => void;
+  onPageChanged?: (data: any) => void;
+};
+
+type State = {
+  currentPage: number;
 };
 
 const LEFT_PAGE = "LEFT";
@@ -22,21 +26,18 @@ const range = (from: number, to: number, step = 1) => {
   return range;
 };
 
-class Pagination extends Component {
-  state: {
-    currentPage: number;
-  };
+class Pagination extends Component<PaginationProps, State> {
   pageLimit: number;
-  totalRecords: number;
+  totalItems: number;
   pageNeighbours: number;
   totalPages: number;
 
   constructor(props: PaginationProps) {
     super(props);
-    const { totalRecords = null, pageLimit = 30, pageNeighbours = 0 } = props;
+    const { totalItems = null, pageLimit = 30, pageNeighbours = 0 } = props;
 
     this.pageLimit = typeof pageLimit === "number" ? pageLimit : 30;
-    this.totalRecords = typeof totalRecords === "number" ? totalRecords : 0;
+    this.totalItems = typeof totalItems === "number" ? totalItems : 0;
 
     // pageNeighbours can be: 0, 1 or 2
     this.pageNeighbours =
@@ -44,33 +45,16 @@ class Pagination extends Component {
         ? Math.max(0, Math.min(pageNeighbours, 2))
         : 0;
 
-    this.totalPages = Math.ceil(this.totalRecords / this.pageLimit);
+    this.totalPages = Math.ceil(this.totalItems / this.pageLimit);
 
     this.state = { currentPage: 1 };
   }
 
-  // ...
-
-  /**
-   * Let's say we have 10 pages and we set pageNeighbours to 2
-   * Given that the current page is 6
-   * The pagination control will look like the following:
-   *
-   * (1) < {4 5} [6] {7 8} > (10)
-   *
-   * (x) => terminal pages: first and last page(always visible)
-   * [x] => represents current page
-   * {...x} => represents page neighbours
-   */
   fetchPageNumbers = () => {
     const totalPages = this.totalPages;
     const currentPage = this.state.currentPage;
     const pageNeighbours = this.pageNeighbours;
 
-    /**
-     * totalNumbers: the total page numbers to show on the control
-     * totalBlocks: totalNumbers + 2 to cover for the left(<) and right(>) controls
-     */
     const totalNumbers = this.pageNeighbours * 2 + 3;
     const totalBlocks = totalNumbers + 2;
 
@@ -79,11 +63,6 @@ class Pagination extends Component {
       const endPage = Math.min(totalPages - 1, currentPage + pageNeighbours);
       let pages = range(startPage, endPage) as any;
 
-      /**
-       * hasLeftSpill: has hidden pages to the left
-       * hasRightSpill: has hidden pages to the right
-       * spillOffset: number of hidden pages either to the left or to the right
-       */
       const hasLeftSpill = startPage > 2;
       const hasRightSpill = totalPages - endPage > 1;
       const spillOffset = totalNumbers - (pages.length + 1);
@@ -118,6 +97,7 @@ class Pagination extends Component {
   };
 
   componentDidMount() {
+    console.log(this.totalItems);
     this.gotoPage(1);
   }
 
@@ -129,7 +109,7 @@ class Pagination extends Component {
       currentPage,
       totalPages: this.totalPages,
       pageLimit: this.pageLimit,
-      totalRecords: this.totalRecords,
+      totalRecords: this.totalItems,
     };
 
     this.setState({ currentPage }, () => onPageChanged(paginationData));
@@ -151,26 +131,32 @@ class Pagination extends Component {
   };
 
   render() {
-    if (!this.totalRecords || this.totalPages === 1) return null;
+    if (!this.totalItems || this.totalPages === 1) return null;
 
     const { currentPage } = this.state;
     const pages = this.fetchPageNumbers();
 
     return (
-      <Fragment>
-        <nav aria-label="Countries Pagination">
-          <ul className="pagination">
+      <div className="w-full flex justify-center h-14 text-darkblue">
+        <nav
+          aria-label="Pagination"
+          className="border-pagination border-2 rounded flex justify-center items-center"
+          style={{ maxWidth: "570px", minWidth: "570px" }}
+        >
+          <ul className="flex">
             {pages.map((page, index) => {
               if (page === LEFT_PAGE)
                 return (
-                  <li key={index} className="page-item">
+                  <li key={index} className="px-2">
                     <a
                       className="page-link"
                       href="#"
                       aria-label="Previous"
                       onClick={this.handleMoveLeft}
                     >
-                      <span aria-hidden="true">&laquo;</span>
+                      <div aria-hidden="true" style={{ lineHeight: "20px" }}>
+                        &laquo;
+                      </div>
                       <span className="sr-only">Previous</span>
                     </a>
                   </li>
@@ -178,14 +164,16 @@ class Pagination extends Component {
 
               if (page === RIGHT_PAGE)
                 return (
-                  <li key={index} className="page-item">
+                  <li key={index} className="px-2">
                     <a
                       className="page-link"
                       href="#"
                       aria-label="Next"
                       onClick={this.handleMoveRight}
                     >
-                      <span aria-hidden="true">&raquo;</span>
+                      <div aria-hidden="true" style={{ lineHeight: "20px" }}>
+                        &raquo;
+                      </div>
                       <span className="sr-only">Next</span>
                     </a>
                   </li>
@@ -194,9 +182,9 @@ class Pagination extends Component {
               return (
                 <li
                   key={index}
-                  className={`page-item${
-                    currentPage === page ? " active" : ""
-                  }`}
+                  className={`${
+                    currentPage === page ? "transform scale-150" : ""
+                  } px-2`}
                 >
                   <a
                     className="page-link"
@@ -210,7 +198,7 @@ class Pagination extends Component {
             })}
           </ul>
         </nav>
-      </Fragment>
+      </div>
     );
   }
 }

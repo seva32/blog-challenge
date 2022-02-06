@@ -21,6 +21,7 @@ module.exports = {
       darkblue: "#335EEA",
       lightgray: "#E5E5E5",
       graycopy: "#6B7C93",
+      pagination: "#D9E2EF",
       ...colors,
     },
   },

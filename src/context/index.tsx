@@ -1,14 +1,24 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
 
-export type Blog = {
+export type BlogProps = {
   title: string;
-  description: string;
-  imgSrc: string;
+  body: string;
+  imageUrl: string;
+  id: number;
+  price: number;
+  userId: number;
+  date: string;
 };
 
 export type BlogListState = {
-  blogList: Blog[];
-  setBlogList: (bloglist: Blog[]) => void;
+  blogList: BlogProps[];
+  setBlogList: (bloglist: BlogProps[]) => void;
   searchString: string;
   setSearchString: (searchString: string) => void;
 };
@@ -24,14 +34,18 @@ export type BlogListProviderProps = {
   children: ReactNode;
 };
 
-export const blogListInitialState = [
-  { title: "One", description: "My desc", imgSrc: "https://" },
-];
+export const blogListInitialState = [];
 
 export function BlogListProvider(params: BlogListProviderProps) {
   const { children } = params;
-  const [blogList, setBlogList] = useState<Blog[]>(blogListInitialState);
+  const [blogList, setBlogList] = useState<BlogProps[]>(blogListInitialState);
   const [searchString, setSearchString] = useState<string>("");
+
+  useEffect(() => {
+    fetch("http://localhost:3004/blogs")
+      .then((response) => response.json())
+      .then((json) => setBlogList(json));
+  }, []);
 
   return (
     <BlogListContext.Provider
