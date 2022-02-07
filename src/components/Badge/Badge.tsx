@@ -20,7 +20,6 @@ function Badge({ children }: Props) {
     Object.keys(bgColors)[
       Math.floor(Math.random() * Object.keys(bgColors).length)
     ];
-  console.log(bgColors[color]);
 
   return (
     <div

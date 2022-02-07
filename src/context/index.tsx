@@ -21,6 +21,7 @@ export type BlogListState = {
   setBlogList: (bloglist: BlogProps[]) => void;
   searchString: string;
   setSearchString: (searchString: string) => void;
+  totalItems: number;
 };
 
 export const BlogListContext = createContext<BlogListState>({
@@ -28,6 +29,7 @@ export const BlogListContext = createContext<BlogListState>({
   setBlogList: () => {},
   searchString: "",
   setSearchString: () => {},
+  totalItems: 0,
 });
 
 export type BlogListProviderProps = {
@@ -40,6 +42,7 @@ export function BlogListProvider(params: BlogListProviderProps) {
   const { children } = params;
   const [blogList, setBlogList] = useState<BlogProps[]>(blogListInitialState);
   const [searchString, setSearchString] = useState<string>("");
+  const [totalItems, setTotalItems] = useState<number>(0);
 
   useEffect(() => {
     fetch("http://localhost:3004/blogs")
@@ -47,9 +50,36 @@ export function BlogListProvider(params: BlogListProviderProps) {
       .then((json) => setBlogList(json));
   }, []);
 
+  useEffect(() => {
+    if (searchString) {
+      const updateList = fetch("http://localhost:3004/blogs")
+        .then((response) => response.json())
+        .then((json) => {
+          const updateList = json.filter((blog: any) =>
+            blog.title.toLowerCase().includes(searchString.toLowerCase())
+          );
+          setBlogList(updateList);
+        });
+    } else {
+      fetch("http://localhost:3004/blogs")
+        .then((response) => response.json())
+        .then((json) => setBlogList(json));
+    }
+  }, [searchString]);
+
+  useEffect(() => {
+    setTotalItems(blogList.length);
+  }, [blogList]);
+
   return (
     <BlogListContext.Provider
-      value={{ blogList, setBlogList, searchString, setSearchString }}
+      value={{
+        blogList,
+        setBlogList,
+        searchString,
+        setSearchString,
+        totalItems,
+      }}
     >
       {children}
     </BlogListContext.Provider>
