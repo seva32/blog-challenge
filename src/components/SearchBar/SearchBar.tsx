@@ -1,19 +1,18 @@
-import React, { ChangeEvent, useState, FormEventHandler } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { Input, Text, Button } from "../";
 import { ReactComponent as SearchIcon } from "../../assets/images/SearchIcon.svg";
 import { useBlogListContext } from "../../context";
 
-type Props = {};
-
-function SearchBar({}: Props) {
+function SearchBar() {
   const [searchText, setSearchText] = useState<string>("");
-  const { blogList, setSearchString } = useBlogListContext();
+  const { blogList, setSearchString, setBlogList } = useBlogListContext();
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     setSearchText(e.target.value);
   }
 
   function handleSubmit() {
+    setBlogList([]);
     setSearchString(searchText);
     setSearchText("");
   }
