@@ -36,7 +36,7 @@ function Home() {
         </div>
       ) : (
         <div className="flex w-full">
-          <div className="min-w-50">mje</div>
+          <div className="min-w-50">No results available</div>
           <div className="w-1/2">
             <img
               src="https://s3-alpha-sig.figma.com/img/2677/f6df/3e802adde5ea9a4d0e59bf94ccd93e02?Expires=1644796800&Signature=CbrHije6-9hM0cXGLgWTOaengLvBDX5OeKY0y-r3RmhzUHnBN4dr06ftfVYZlLQB2g1icaGhcyQieLBvD-r6QgYqS0Hnw9bNw5CqyqGZArRdo1kyD-MqfHLZKa4ufhCGRApJFgV1viTGUyMATkIm15UVL55PfkuMcdRu6raZHt5AIdf0NZqX0Wcq27HyUFyFGYS3gHADUt1~qnkBEOzsYmxv86G-63OM3~uLN2iWPZirRAcadtE4FChaMOQtn3c8bOlGymN8dpy5TAX-0yyBn2~6UoaG8moHCFPkyPu9TT5R7mLCaGlOFQH2GTLnUfs~X-rhcUT38Kpy3rghG9RDOw__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA"
