@@ -1,23 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Layout, SearchBar, Text, Card, Pagination } from "../components";
 import { BlogProps, useBlogListContext } from "../context";
 
 function Home() {
-  const { searchString, blogList, totalItems } = useBlogListContext();
+  const { searchString, blogList } = useBlogListContext();
   const [currentPage, setCurrentPage] = useState();
   const [currentBlogs, setCurrentBlogs] = useState<BlogProps[]>();
   const [totalPages, setTotalPages] = useState();
+  const [totalItems, setTotalItems] = useState<number>(0);
+
+  useEffect(() => {
+    setTotalItems(blogList.length);
+  }, [blogList]);
 
   function onPageChanged(data: any) {
     const { currentPage, totalPages, pageLimit } = data;
     const offset = (currentPage - 1) * pageLimit;
     const currentBlogs = blogList.slice(offset, offset + pageLimit);
 
+    // axios
+    //   .get(`/api/blogs?page=${currentPage}&limit=${pageLimit}`)
+    //   .then((response: any) => {
+    //     const currentBlogs = response.data.countries;
+    //     setCurrentPage(currentPage);
+    //     setCurrentBlogs(currentBlogs);
+    //     setTotalPages(totalPages);
+    //   });
     setCurrentPage(currentPage);
     setCurrentBlogs(currentBlogs);
     setTotalPages(totalPages);
   }
 
+  console.log(totalItems);
   return (
     <Layout>
       <div className="py-14">
@@ -45,16 +59,14 @@ function Home() {
           </div>
         </div>
       )}
-      {(totalItems > 0 || (searchString && totalItems > 0)) && (
-        <div className="my-16">
-          <Pagination
-            // totalItems={totalItems}
-            pageLimit={6}
-            pageNeighbours={1}
-            onPageChanged={onPageChanged}
-          />
-        </div>
-      )}
+      <div className="my-16">
+        <Pagination
+          totalItems={totalItems}
+          pageLimit={6}
+          pageNeighbours={1}
+          onPageChanged={onPageChanged}
+        />
+      </div>
     </Layout>
   );
 }
