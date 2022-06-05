@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useBlogListContext } from "../../context";
 
 type PaginationProps = {
   totalItems?: number;
@@ -24,20 +23,36 @@ const range = (from: number, to: number, step = 1) => {
 };
 
 function Pagination(props: PaginationProps) {
-  const { totalItems } = useBlogListContext();
   const {
-    // totalItems: total = 0,
-    pageLimit: limit = 30,
+    totalItems = 0,
+    pageLimit = 30,
     pageNeighbours: neighbours = 0,
     onPageChanged,
   } = props;
-  const [pageLimit, setPageLimit] = useState<number>(limit);
-  // const [totalItems, settotalItems] = useState<number>(total);
   const [pageNeighbours, setPageNeighbours] = useState<number>(
     neighbours ? Math.max(0, Math.min(neighbours, 2)) : 0
   );
-  const [totalPages] = useState<number>(Math.ceil(totalItems / limit));
+  const totalPages = Math.ceil(totalItems / pageLimit);
   const [currentPage, setCurrentPage] = useState<number>(1);
+
+  const gotoPage = useCallback(
+    (page: number) => {
+      const updatedCurrentPage = Math.max(0, Math.min(page, totalPages));
+      const paginationData = {
+        currentPage: updatedCurrentPage,
+        totalPages,
+        pageLimit,
+      };
+      setCurrentPage(updatedCurrentPage);
+      console.log("goto ", updatedCurrentPage, paginationData);
+      onPageChanged && onPageChanged(paginationData);
+    },
+    [totalItems, currentPage]
+  );
+
+  useEffect(() => {
+    if (totalItems) gotoPage(1);
+  }, [totalItems]);
 
   function fetchPageNumbers() {
     const totalNumbers = pageNeighbours * 2 + 3;
@@ -81,24 +96,6 @@ function Pagination(props: PaginationProps) {
     return range(1, totalPages);
   }
 
-  const gotoPage = useCallback(
-    (page: number) => {
-      const currentPage = Math.max(0, Math.min(page, totalPages));
-      const paginationData = {
-        currentPage: currentPage,
-        totalPages,
-        pageLimit,
-      };
-      setCurrentPage(currentPage);
-      onPageChanged && onPageChanged(paginationData);
-    },
-    [totalItems, currentPage]
-  );
-
-  useEffect(() => {
-    gotoPage(1);
-  }, []);
-
   const handleClick = (page: number) => (evt: any) => {
     evt.preventDefault();
     gotoPage(page);
@@ -114,7 +111,12 @@ function Pagination(props: PaginationProps) {
     gotoPage(currentPage + pageNeighbours * 2 + 1);
   };
 
-  if (!totalItems || totalPages === 1) return null;
+  console.log("totalItems", totalItems);
+  console.log("totalPages", totalPages);
+
+  if (!totalItems || totalPages === 1) {
+    return null;
+  }
 
   const pages = fetchPageNumbers();
 
